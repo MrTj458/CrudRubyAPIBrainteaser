@@ -48,30 +48,43 @@ class API
 	end
 
 	def show_all
-		puts HTTParty.get("#{@endpoint}/users")
+		users = HTTParty.get("#{@endpoint}/users")
+		users.each do |user|
+			puts '--------------------------------'
+			puts "ID:         #{user['id']}"
+			puts "First name: #{user['first_name']}"
+			puts "Last Name:  #{user['last_name']}"
+			puts "Phone:      #{user['phone_number']}"
+		end
+		puts '--------------------------------'
 	end
 
 	def show_one
 		user_id = get_user_id
-		puts HTTParty.get("#{@endpoint}/users/#{user_id}")
+		user = HTTParty.get("#{@endpoint}/users/#{user_id}")
+		show_user(user)
 	end
 
 	def create_user
 		info = get_user_info
 
-		puts HTTParty.post("#{@endpoint}/users?user[first_name]=#{info[0]}&user[last_name]=#{info[1]}&user[phone_number]=#{info[2]}")
+		user = HTTParty.post("#{@endpoint}/users?user[first_name]=#{info[0]}&user[last_name]=#{info[1]}&user[phone_number]=#{info[2]}")
 	end
 
 	def update_user
 		user_id = get_user_id
 		info = get_user_info
 
-		puts HTTParty.put("#{@endpoint}/users/#{user_id}?user[first_name]=#{info[0]}&user[last_name]=#{info[1]}&user[phone_number]=#{info[2]}")
+		user = HTTParty.put("#{@endpoint}/users/#{user_id}?user[first_name]=#{info[0]}&user[last_name]=#{info[1]}&user[phone_number]=#{info[2]}")
+		show_user(user)
 	end
 
 	def delete_user
 		user_id = get_user_id
-		puts HTTParty.delete("#{@endpoint}/users/#{user_id}").message
+		message =  HTTParty.delete("#{@endpoint}/users/#{user_id}").message
+		puts '---------------------------------'
+		puts message
+		puts '---------------------------------'
 	end
 
 	private
@@ -94,6 +107,15 @@ class API
 			phone_number = gets.chomp
 
 			[first_name, last_name, phone_number]
+		end
+
+		def show_user(user)
+			puts '---------------------------------'
+			puts "ID:         #{user['id']}"
+			puts "First name: #{user['first_name']}"
+			puts "Last Name:  #{user['last_name']}"
+			puts "Phone:      #{user['phone_number']}"
+			puts '--------------------------------'
 		end
 end
 
